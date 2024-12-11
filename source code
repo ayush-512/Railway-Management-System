@@ -1,0 +1,296 @@
+/******************************************************************************
+
+Welcome to GDB Online.
+  GDB online is an online compiler and debugger tool for C, C++, Python, PHP, Ruby, 
+  C#, OCaml, VB, Perl, Swift, Prolog, Javascript, Pascal, COBOL, HTML, CSS, JS
+  Code, Compile, Run and Debug online from anywhere in world.
+
+*******************************************************************************/
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+// Base Train Class
+class Train {
+protected:
+    int trainNumber;
+    string trainName;
+    string source;
+    string destination;
+    int totalSeats;
+    int availableSeats;
+
+public:
+    Train(int number, string name, string src, string dest, int seats)
+        : trainNumber(number), trainName(name), source(src), destination(dest),
+          totalSeats(seats), availableSeats(seats) {}
+
+    virtual void displayDetails() {
+        cout << setw(10) << trainNumber
+             << setw(20) << trainName
+             << setw(15) << source
+             << setw(15) << destination
+             << setw(10) << totalSeats
+             << setw(10) << availableSeats << endl;
+    }
+
+    int getTrainNumber() { return trainNumber; }
+    string getTrainName() { return trainName; }
+    bool bookSeat() {
+        if (availableSeats > 0) {
+            availableSeats--;
+            return true;
+        }
+        return false;
+    }
+};
+
+// Specialized Passenger Train
+class PassengerTrain : public Train {
+public:
+    PassengerTrain(int number, string name, string src, string dest, int seats)
+        : Train(number, name, src, dest, seats) {}
+
+    void displayDetails() override {
+        cout << setw(10) << trainNumber
+             << setw(20) << trainName
+             << setw(15) << source
+             << setw(15) << destination
+             << setw(10) << totalSeats
+             << setw(10) << availableSeats
+             << " (Passenger Train)" << endl;
+    }
+};
+
+// Specialized Freight Train
+class FreightTrain : public Train {
+    int cargoCapacity; // in tons
+public:
+    FreightTrain(int number, string name, string src, string dest, int capacity)
+        : Train(number, name, src, dest, 0), cargoCapacity(capacity) {}
+
+    void displayDetails() override {
+        cout << setw(10) << trainNumber
+             << setw(20) << trainName
+             << setw(15) << source
+             << setw(15) << destination
+             << setw(10) << "N/A"
+             << setw(10) << cargoCapacity << " tons (Freight Train)" << endl;
+    }
+};
+
+// Base Passenger Class
+class Passenger {
+protected:
+    int passengerID;
+    string name;
+    int age;
+    string gender;
+
+public:
+    Passenger(int id, string name, int age, string gender)
+        : passengerID(id), name(name), age(age), gender(gender) {}
+
+    virtual void displayDetails() {
+        cout << setw(10) << passengerID
+             << setw(20) << name
+             << setw(10) << age
+             << setw(10) << gender << endl;
+    }
+
+    int getPassengerID() { return passengerID; }
+    string getPassengerName() { return name; }
+};
+
+// Specialized Regular Passenger
+class RegularPassenger : public Passenger {
+public:
+    RegularPassenger(int id, string name, int age, string gender)
+        : Passenger(id, name, age, gender) {}
+
+    void displayDetails() override {
+        cout << setw(10) << passengerID
+             << setw(20) << name
+             << setw(10) << age
+             << setw(10) << gender
+             << " (Regular)" << endl;
+    }
+};
+
+// Specialized VIP Passenger
+class VIPPassenger : public Passenger {
+    string privileges;
+
+public:
+    VIPPassenger(int id, string name, int age, string gender, string priv)
+        : Passenger(id, name, age, gender), privileges(priv) {}
+
+    void displayDetails() override {
+        cout << setw(10) << passengerID
+             << setw(20) << name
+             << setw(10) << age
+             << setw(10) << gender
+             << " (VIP, Privileges: " << privileges << ")" << endl;
+    }
+};
+
+// Ticket Booking Class
+class BookTicket {
+    int bookingID;
+    int passengerID;
+    int trainNumber;
+    string status;
+
+public:
+    BookTicket(int bID, int pID, int tNumber, string st)
+        : bookingID(bID), passengerID(pID), trainNumber(tNumber), status(st) {}
+
+    void displayBooking() {
+        cout << setw(10) << bookingID
+             << setw(15) << passengerID
+             << setw(15) << trainNumber
+             << setw(20) << status << endl;
+    }
+};
+
+// Railway Management System
+class RailwaySystem {
+    vector<Train*> trains;
+    vector<Passenger*> passengers;
+    vector<BookTicket> bookings;
+    int nextPassengerID = 1;
+    int nextBookingID = 1;
+
+public:
+    RailwaySystem() {
+        // Predefined trains
+        trains.push_back(new PassengerTrain(101, "Rajdhani Express", "Delhi", "Mumbai", 120));
+        trains.push_back(new PassengerTrain(102, "Shatabdi Express", "Delhi", "Chandigarh", 100));
+        trains.push_back(new FreightTrain(201, "Goods Carrier", "Mumbai", "Kolkata", 500));
+    }
+
+    ~RailwaySystem() {
+        for (auto train : trains)
+            delete train;
+        for (auto passenger : passengers)
+            delete passenger;
+    }
+
+    void displayTrains() {
+        cout << setw(10) << "Train No"
+             << setw(20) << "Train Name"
+             << setw(15) << "Source"
+             << setw(15) << "Destination"
+             << setw(10) << "Seats"
+             << setw(10) << "Available" << endl;
+        for (auto train : trains)
+            train->displayDetails();
+    }
+
+    void addPassenger(string name, int age, string gender, bool isVIP = false) {
+        if (isVIP) {
+            string privileges;
+            cout << "Enter VIP Privileges: ";
+            cin.ignore();
+            getline(cin, privileges);
+            passengers.push_back(new VIPPassenger(nextPassengerID++, name, age, gender, privileges));
+        } else {
+            passengers.push_back(new RegularPassenger(nextPassengerID++, name, age, gender));
+        }
+        cout << "Passenger added successfully. ID: " << nextPassengerID - 1 << endl;
+    }
+
+    void displayPassengers() {
+        cout << setw(10) << "Passenger ID"
+             << setw(20) << "Name"
+             << setw(10) << "Age"
+             << setw(10) << "Gender" << endl;
+        for (auto passenger : passengers)
+            passenger->displayDetails();
+    }
+
+    void bookTicket(int trainNumber, int passengerID) {
+        for (auto train : trains) {
+            if (train->getTrainNumber() == trainNumber) {
+                if (train->bookSeat()) {
+                    bookings.emplace_back(nextBookingID++, passengerID, trainNumber, "Confirmed");
+                    cout << "Ticket booked successfully for Passenger ID "
+                         << passengerID << " on Train " << trainNumber << ".\n";
+                } else {
+                    bookings.emplace_back(nextBookingID++, passengerID, trainNumber, "Waitlisted");
+                    cout << "No seats available. Ticket added to waitlist.\n";
+                }
+                return;
+            }
+        }
+        cout << "Invalid train number.\n";
+    }
+
+    void displayBookings() {
+        cout << setw(10) << "Booking ID"
+             << setw(15) << "Passenger ID"
+             << setw(15) << "Train Number"
+             << setw(20) << "Status" << endl;
+        for (auto& booking : bookings)
+            booking.displayBooking();
+    }
+};
+
+// Main Function
+int main() {
+    RailwaySystem system;
+
+    while (true) {
+        cout << "\n*\n";
+        cout << "RAILWAY MANAGEMENT SYSTEM";
+        cout << "\n*\n";
+        cout << "1. Display Trains\n";
+        cout << "2. Add Passenger\n";
+        cout << "3. Book Ticket\n";
+        cout << "4. Display Passengers\n";
+        cout << "5. Display Bookings\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            system.displayTrains();
+        } else if (choice == 2) {
+            string name, gender;
+            int age;
+            bool isVIP;
+            cout << "Enter Passenger Name: ";
+            cin.ignore();
+            getline(cin, name);
+            cout << "Enter Age: ";
+            cin >> age;
+            cin.ignore();
+            cout << "Enter Gender: ";
+            getline(cin, gender);
+            cout << "Is this a VIP Passenger? (1 for Yes, 0 for No): ";
+            cin >> isVIP;
+            system.addPassenger(name, age, gender, isVIP);
+        } else if (choice == 3) {
+            int trainNumber, passengerID;
+            cout << "Enter Train Number: ";
+            cin >> trainNumber;
+            cout << "Enter Passenger ID: ";
+            cin >> passengerID;
+            system.bookTicket(trainNumber, passengerID);
+        } else if (choice == 4) {
+            system.displayPassengers();
+        } else if (choice == 5) {
+            system.displayBookings();
+        } else if (choice == 6) {
+            cout << "Exiting the system...\n";
+            break;
+        } else {
+            cout << "Invalid choice! Please try again.\n";
+        }
+    }
+
+    return 0;
+}
