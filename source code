@@ -205,6 +205,12 @@ public:
         trains.push_back(new PassengerTrain(102, "Shatabdi Express", "Delhi", "Chandigarh", 100));
         trains.push_back(new FreightTrain(201, "Goods Carrier", "Mumbai", "Kolkata", 500));
     }
+~RailwaySystem() {
+        for (auto train : trains)
+            delete train;
+        for (auto passenger : passengers)
+            delete passenger;
+    }
     void displayTrains() 
     {
         cout << setw(10) << "Train No"
