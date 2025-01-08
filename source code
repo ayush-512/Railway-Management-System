@@ -16,8 +16,12 @@ protected:
 
 public:
     Train(int number, string name, string src, string dest, int seats)
-        : trainNumber(number), trainName(name), source(src), destination(dest),
-          totalSeats(seats), availableSeats(seats) {}
+    {   trainNumber=number; 
+        trainName=name; 
+        source=src; 
+        destination=dest;
+        totalSeats=seats; 
+        availableSeats=seats;}
 
     virtual void displayDetails() {
         cout << setw(10) << trainNumber
@@ -28,10 +32,18 @@ public:
              << setw(10) << availableSeats << endl;
     }
 
-    int getTrainNumber() { return trainNumber; }
-    string getTrainName() { return trainName; }
-    bool bookSeat() {
-        if (availableSeats > 0) {
+    int getTrainNumber() 
+    { 
+        return trainNumber; 
+    }
+    string getTrainName() 
+    { 
+        return trainName; 
+    }
+    bool bookSeat() 
+    {
+        if (availableSeats > 0) 
+        {
             availableSeats--;
             return true;
         }
@@ -45,7 +57,8 @@ public:
     PassengerTrain(int number, string name, string src, string dest, int seats)
         : Train(number, name, src, dest, seats) {}
 
-    void displayDetails() override {
+    void displayDetails() override 
+    {
         cout << setw(10) << trainNumber
              << setw(20) << trainName
              << setw(15) << source
@@ -61,9 +74,13 @@ class FreightTrain : public Train {
     int cargoCapacity; // in tons
 public:
     FreightTrain(int number, string name, string src, string dest, int capacity)
-        : Train(number, name, src, dest, 0), cargoCapacity(capacity) {}
+        : Train(number, name, src, dest, 0)
+        { 
+            cargoCapacity=capacity;
+        }
 
-    void displayDetails() override {
+    void displayDetails() override 
+    {
         cout << setw(10) << trainNumber
              << setw(20) << trainName
              << setw(15) << source
@@ -83,17 +100,29 @@ protected:
 
 public:
     Passenger(int id, string name, int age, string gender)
-        : passengerID(id), name(name), age(age), gender(gender) {}
+        {
+            passengerID=id; 
+            name=name; 
+            age=age; 
+            gender=gender;
+        }
 
-    virtual void displayDetails() {
+    virtual void displayDetails() 
+    {
         cout << setw(10) << passengerID
              << setw(20) << name
              << setw(10) << age
              << setw(10) << gender << endl;
     }
 
-    int getPassengerID() { return passengerID; }
-    string getPassengerName() { return name; }
+    int getPassengerID() 
+    { 
+        return passengerID; 
+    }
+    string getPassengerName() 
+    { 
+        return name; 
+    }
 };
 
 // Specialized Regular Passenger
@@ -102,7 +131,8 @@ public:
     RegularPassenger(int id, string name, int age, string gender)
         : Passenger(id, name, age, gender) {}
 
-    void displayDetails() override {
+    void displayDetails() override 
+    {
         cout << setw(10) << passengerID
              << setw(20) << name
              << setw(10) << age
@@ -112,14 +142,19 @@ public:
 };
 
 // Specialized VIP Passenger
-class VIPPassenger : public Passenger {
+class VIPPassenger : public Passenger 
+{
     string privileges;
 
 public:
     VIPPassenger(int id, string name, int age, string gender, string priv)
-        : Passenger(id, name, age, gender), privileges(priv) {}
+        : Passenger(id, name, age, gender)
+        {
+            privileges=priv;
+        }
 
-    void displayDetails() override {
+    void displayDetails() override 
+    {
         cout << setw(10) << passengerID
              << setw(20) << name
              << setw(10) << age
@@ -137,9 +172,15 @@ class BookTicket {
 
 public:
     BookTicket(int bID, int pID, int tNumber, string st)
-        : bookingID(bID), passengerID(pID), trainNumber(tNumber), status(st) {}
+        {
+            bookingID=bID; 
+            passengerID=pID; 
+            trainNumber=tNumber; 
+            status=st;
+        }
 
-    void displayBooking() {
+    void displayBooking() 
+    {
         cout << setw(10) << bookingID
              << setw(15) << passengerID
              << setw(15) << trainNumber
@@ -148,7 +189,8 @@ public:
 };
 
 // Railway Management System
-class RailwaySystem {
+class RailwaySystem 
+{
     vector<Train*> trains;
     vector<Passenger*> passengers;
     vector<BookTicket> bookings;
@@ -156,21 +198,15 @@ class RailwaySystem {
     int nextBookingID = 1;
 
 public:
-    RailwaySystem() {
+    RailwaySystem() 
+    {
         // Predefined trains
         trains.push_back(new PassengerTrain(101, "Rajdhani Express", "Delhi", "Mumbai", 120));
         trains.push_back(new PassengerTrain(102, "Shatabdi Express", "Delhi", "Chandigarh", 100));
         trains.push_back(new FreightTrain(201, "Goods Carrier", "Mumbai", "Kolkata", 500));
     }
-
-    ~RailwaySystem() {
-        for (auto train : trains)
-            delete train;
-        for (auto passenger : passengers)
-            delete passenger;
-    }
-
-    void displayTrains() {
+    void displayTrains() 
+    {
         cout << setw(10) << "Train No"
              << setw(20) << "Train Name"
              << setw(15) << "Source"
@@ -181,20 +217,25 @@ public:
             train->displayDetails();
     }
 
-    void addPassenger(string name, int age, string gender, bool isVIP = false) {
-        if (isVIP) {
+    void addPassenger(string name, int age, string gender, bool isVIP = false) 
+    {
+        if (isVIP) 
+        {
             string privileges;
             cout << "Enter VIP Privileges: ";
             cin.ignore();
             getline(cin, privileges);
             passengers.push_back(new VIPPassenger(nextPassengerID++, name, age, gender, privileges));
-        } else {
+        } 
+        else 
+        {
             passengers.push_back(new RegularPassenger(nextPassengerID++, name, age, gender));
         }
         cout << "Passenger added successfully. ID: " << nextPassengerID - 1 << endl;
     }
 
-    void displayPassengers() {
+    void displayPassengers() 
+    {
         cout << setw(10) << "Passenger ID"
              << setw(20) << "Name"
              << setw(10) << "Age"
@@ -203,14 +244,20 @@ public:
             passenger->displayDetails();
     }
 
-    void bookTicket(int trainNumber, int passengerID) {
-        for (auto train : trains) {
-            if (train->getTrainNumber() == trainNumber) {
-                if (train->bookSeat()) {
+    void bookTicket(int trainNumber, int passengerID) 
+    {
+        for (auto train : trains) 
+        {
+            if (train->getTrainNumber() == trainNumber) 
+            {
+                if (train->bookSeat()) 
+                {
                     bookings.emplace_back(nextBookingID++, passengerID, trainNumber, "Confirmed");
                     cout << "Ticket booked successfully for Passenger ID "
                          << passengerID << " on Train " << trainNumber << ".\n";
-                } else {
+                } 
+                else 
+                {
                     bookings.emplace_back(nextBookingID++, passengerID, trainNumber, "Waitlisted");
                     cout << "No seats available. Ticket added to waitlist.\n";
                 }
@@ -220,7 +267,8 @@ public:
         cout << "Invalid train number.\n";
     }
 
-    void displayBookings() {
+    void displayBookings() 
+    {
         cout << setw(10) << "Booking ID"
              << setw(15) << "Passenger ID"
              << setw(15) << "Train Number"
@@ -231,10 +279,12 @@ public:
 };
 
 // Main Function
-int main() {
+int main() 
+{
     RailwaySystem system;
 
-    while (true) {
+    while (true) 
+    {
         cout << "\n*\n";
         cout << "RAILWAY MANAGEMENT SYSTEM";
         cout << "\n*\n";
@@ -248,9 +298,12 @@ int main() {
         int choice;
         cin >> choice;
 
-        if (choice == 1) {
+        if (choice == 1) 
+        {
             system.displayTrains();
-        } else if (choice == 2) {
+        } 
+        else if (choice == 2) 
+        {
             string name, gender;
             int age;
             bool isVIP;
@@ -265,24 +318,33 @@ int main() {
             cout << "Is this a VIP Passenger? (1 for Yes, 0 for No): ";
             cin >> isVIP;
             system.addPassenger(name, age, gender, isVIP);
-        } else if (choice == 3) {
+        } 
+        else if (choice == 3) 
+        {
             int trainNumber, passengerID;
             cout << "Enter Train Number: ";
             cin >> trainNumber;
             cout << "Enter Passenger ID: ";
             cin >> passengerID;
             system.bookTicket(trainNumber, passengerID);
-        } else if (choice == 4) {
+        } 
+        else if (choice == 4) 
+        {
             system.displayPassengers();
-        } else if (choice == 5) {
+        } 
+        else if (choice == 5) 
+        {
             system.displayBookings();
-        } else if (choice == 6) {
+        } 
+        else if (choice == 6) 
+        {
             cout << "Exiting the system...\n";
             break;
-        } else {
+        } 
+        else 
+        {
             cout << "Invalid choice! Please try again.\n";
         }
     }
-
     return 0;
 }
